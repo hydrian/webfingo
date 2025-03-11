@@ -23,7 +23,8 @@ type DBConfig struct {
 
 // KeycloakConfig holds Keycloak connection details
 type KeycloakConfig struct {
-	URL string `json:"url"`
+	URL          string `json:"url"`
+	KeycloakHost string `json:"keycloak-host"`
 }
 
 // Load reads and parses the configuration file
@@ -49,6 +50,11 @@ func (c *Config) GetDBConfig() DBConfig {
 // GetKeycloakConfig returns the Keycloak configuration
 func (c *Config) GetKeycloakConfig() KeycloakConfig {
 	return c.Keycloak
+}
+
+// GetKeycloakHost returns the configured Keycloak host
+func (c *Config) GetKeycloakHost() string {
+	return c.Keycloak.KeycloakHost
 }
 
 // GetDBConnectionString returns a formatted PostgreSQL connection string

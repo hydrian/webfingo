@@ -35,7 +35,7 @@ func main() {
 
 	// Define WebFinger handler
 	http.HandleFunc("/.well-known/webfinger", func(w http.ResponseWriter, r *http.Request) {
-		webfingo.HandleWebfingerRequest(w, r, dbInstance)
+		webfingo.HandleWebfingerRequest(w, r, dbInstance, conf)
 	})
 
 	// Start HTTP server

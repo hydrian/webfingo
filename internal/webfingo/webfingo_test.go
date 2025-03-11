@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 // MockDatabase implements the minimal Database interface needed for testing
 type MockDatabase struct{}
 
@@ -30,20 +29,22 @@ func TestHandleWebfingerRequest(t *testing.T) {
 	// Create a mock database
 	db := MockDatabase{}
 
+	// Create a mock KeycloakConfig
+	keycloakConfig := KeycloakConfig{
+		KeycloakHost: "example.com",
+	}
+
 	// Create a request with the required query parameter
 	req, err := http.NewRequest("GET", "/.well-known/webfinger?resource=acct:john@example.com", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Set the host in the request
-	req.Host = "example.com"
-
 	// Create a ResponseRecorder to record the response
 	rr := httptest.NewRecorder()
 
-	// Call the handler function
-	HandleWebfingerRequest(rr, req, db)
+	// Call the handler function with the KeycloakConfig
+	HandleWebfingerRequest(rr, req, db, keycloakConfig)
 
 	// Check the status code
 	if status := rr.Code; status != http.StatusOK {

@@ -1,10 +1,10 @@
 package webfingo
 
 import (
-	"net/http"
-	"strings"
-	"net/url"
 	"encoding/json"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // WebFingerResponse represents the JSON structure for WebFinger responses
@@ -19,7 +19,7 @@ type WebFingerLinkItem struct {
 	Href string `json:"href"`
 }
 
-func HandleWebfingerRequest (w http.ResponseWriter, r *http.Request, db Database) {
+func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database, keycloakConfig KeycloakConfig) {
 	// Set content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
@@ -51,8 +51,8 @@ func HandleWebfingerRequest (w http.ResponseWriter, r *http.Request, db Database
 		return
 	}
 
-	// Construct base URL from request
-	baseURL := "https://" + r.Host
+	// Use the configured host
+	baseURL := "https://" + keycloakConfig.KeycloakHost
 
 	// Create WebFinger response
 	response := WebFingerResponse{
