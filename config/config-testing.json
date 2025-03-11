@@ -1,0 +1,12 @@
+{
+    "db": {
+        "host": "localhost",
+        "port": "95432",
+        "user": "postgresuser",
+        "password": "postgrespassword",
+        "name": "postgresdb"
+    },
+    "keycloak": {
+        "url": "http://auth.example.com"
+    }
+}
