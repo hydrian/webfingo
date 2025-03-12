@@ -25,6 +25,10 @@ func (m MockDatabase) GetUserByEmail(ctx context.Context, email string) (*User, 
 	return nil, nil
 }
 
+func (m MockDatabase) Close() error {
+	return nil
+}
+
 func TestHandleWebfingerRequest(t *testing.T) {
 	// Create a mock database
 	db := MockDatabase{}

@@ -20,6 +20,7 @@ type User struct {
 // Database interface for testing
 type Database interface {
 	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	Close() error
 }
 
 // Postgres represents a database connection
@@ -28,10 +29,30 @@ type Postgres struct {
 }
 
 // NewDatabase creates a new database connection
-func NewDatabase(db *sql.DB) Database {
+func NewDatabase(connectionString string) (Database, error) {
+	// Connect to PostgreSQL using the connection string
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		return nil, err
+	}
+
+	// Verify database connection
+	if err := db.PingContext(context.Background()); err != nil {
+		db.Close()
+		return nil, err
+	}
+
 	return &Postgres{
 		db: db,
+	}, nil
+}
+
+// Close closes the database connection
+func (db *Postgres) Close() error {
+	if db.db == nil {
+		return nil
 	}
+	return db.db.Close()
 }
 
 // GetUserByEmail retrieves a user by their email address

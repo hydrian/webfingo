@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"flag"
 	"log"
 	"net/http"
@@ -14,24 +12,16 @@ import (
 )
 
 func main() {
-
 	conf := getConf()
 
-	// Connect to PostgreSQL using the configuration
-	db, err := sql.Open("postgres", conf.GetDBConnectionString())
+	// Create database instance with connection handling moved to NewDatabase
+	dbInstance, err := webfingo.NewDatabase(conf.GetDBConnectionString())
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
-	defer db.Close()
+	defer dbInstance.Close()
 
-	// Verify database connection
-	if err := db.PingContext(context.Background()); err != nil {
-		log.Fatalf("Unable to ping database: %v\n", err)
-	}
 	log.Println("Successfully connected to database")
-
-	// Create database instance
-	dbInstance := webfingo.NewDatabase(db)
 
 	// Define WebFinger handler
 	http.HandleFunc("/.well-known/webfinger", func(w http.ResponseWriter, r *http.Request) {
