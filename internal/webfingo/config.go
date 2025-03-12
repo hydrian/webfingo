@@ -23,7 +23,6 @@ type DBConfig struct {
 
 // KeycloakConfig holds Keycloak connection details
 type KeycloakConfig struct {
-	URL          string `json:"url"`
 	KeycloakHost string `json:"keycloak-host"`
 }
 
