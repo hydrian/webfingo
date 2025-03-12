@@ -2,7 +2,6 @@ package webfingo
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -20,21 +19,21 @@ type WebFingerLinkItem struct {
 	Href string `json:"href"`
 }
 
-func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database, keycloakConfig KeycloakConfig) {
+func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database, keycloakConfig KeycloakConfig, logger *Logger) {
 	// Set content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
 	// Get resource parameter
 	resource := r.URL.Query().Get("resource")
 	if resource == "" {
-		log.Printf("WebFinger request missing required 'resource' parameter from %s", r.RemoteAddr)
+		logger.Printf("WebFinger request missing required 'resource' parameter from %s", r.RemoteAddr)
 		http.Error(w, "Resource parameter is required", http.StatusBadRequest)
 		return
 	}
 
 	// Parse the resource parameter (expected format: acct:user@domain)
 	if !strings.HasPrefix(resource, "acct:") {
-		log.Printf("WebFinger request with invalid resource format: %s from %s", resource, r.RemoteAddr)
+		logger.Printf("WebFinger request with invalid resource format: %s from %s", resource, r.RemoteAddr)
 		http.Error(w, "Invalid resource format", http.StatusBadRequest)
 		return
 	}
@@ -43,7 +42,7 @@ func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database,
 	email := strings.TrimPrefix(resource, "acct:")
 	email, err := url.QueryUnescape(email)
 	if err != nil {
-		log.Printf("Error unescaping email from resource '%s': %v", resource, err)
+		logger.Printf("Error unescaping email from resource '%s': %v", resource, err)
 		http.Error(w, "Invalid resource format", http.StatusBadRequest)
 		return
 	}
@@ -51,7 +50,7 @@ func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database,
 	// Get user from database
 	user, err := db.GetUserByEmail(r.Context(), email)
 	if err != nil {
-		log.Printf("Error retrieving user by email '%s': %v", email, err)
+		logger.Printf("Error retrieving user by email '%s': %v", email, err)
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
@@ -72,7 +71,7 @@ func HandleWebfingerRequest(w http.ResponseWriter, r *http.Request, db Database,
 
 	// Encode response as JSON
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Printf("Error encoding WebFinger response for '%s': %v", email, err)
+		logger.Printf("Error encoding WebFinger response for '%s': %v", email, err)
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 		return
 	}

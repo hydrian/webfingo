@@ -35,6 +35,9 @@ func TestHandleWebfingerRequest(t *testing.T) {
 	// Create a mock database
 	db := MockDatabase{}
 
+	// Create a silent logger for tests
+	logger := SilentLogger()
+
 	// Create a mock KeycloakConfig
 	keycloakConfig := KeycloakConfig{
 		KeycloakHost: "example.com",
@@ -49,8 +52,8 @@ func TestHandleWebfingerRequest(t *testing.T) {
 	// Create a ResponseRecorder to record the response
 	rr := httptest.NewRecorder()
 
-	// Call the handler function with the KeycloakConfig
-	HandleWebfingerRequest(rr, req, db, keycloakConfig)
+	// Call the handler function with the KeycloakConfig and logger
+	HandleWebfingerRequest(rr, req, db, keycloakConfig, logger)
 
 	// Check the status code
 	if status := rr.Code; status != http.StatusOK {
@@ -95,6 +98,9 @@ func TestHandleWebfingerRequestUnknownUser(t *testing.T) {
 	// Create a mock database
 	db := MockDatabase{}
 
+	// Create a silent logger for tests
+	logger := SilentLogger()
+
 	// Create a mock KeycloakConfig
 	keycloakConfig := KeycloakConfig{
 		KeycloakHost: "example.com",
@@ -109,8 +115,8 @@ func TestHandleWebfingerRequestUnknownUser(t *testing.T) {
 	// Create a ResponseRecorder to record the response
 	rr := httptest.NewRecorder()
 
-	// Call the handler function with the KeycloakConfig
-	HandleWebfingerRequest(rr, req, db, keycloakConfig)
+	// Call the handler function with the KeycloakConfig and logger
+	HandleWebfingerRequest(rr, req, db, keycloakConfig, logger)
 
 	// Check the status code - should be 404 Not Found for unknown user
 	if status := rr.Code; status != http.StatusNotFound {
