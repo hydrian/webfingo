@@ -64,8 +64,9 @@ func (db *Postgres) GetUserByEmail(ctx context.Context, email string) (*User, er
 	query := `
 		SELECT u.id, u.email, u.username, u.realm_id, r.name as realm_name
 		FROM user_entity u
-		LEFT JOIN realms r ON u.realm_id = r.id
+		INNER JOIN realms r ON u.realm_id = r.id
 		WHERE u.email = $1
+		LIMIT 1
 	`
 
 	var user User

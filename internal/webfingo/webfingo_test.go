@@ -3,6 +3,7 @@ package webfingo
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -22,7 +23,8 @@ func (m MockDatabase) GetUserByEmail(ctx context.Context, email string) (*User, 
 			RealmName: "master",
 		}, nil
 	}
-	return nil, nil
+	// Return a "no rows" error for unknown users
+	return nil, errors.New("sql: no rows in result set")
 }
 
 func (m MockDatabase) Close() error {
@@ -86,5 +88,32 @@ func TestHandleWebfingerRequest(t *testing.T) {
 	expectedHref := "https://example.com/realms/master"
 	if response.Links[0].Href != expectedHref {
 		t.Errorf("handler returned unexpected link href: got %v want %v", response.Links[0].Href, expectedHref)
+	}
+}
+
+func TestHandleWebfingerRequestUnknownUser(t *testing.T) {
+	// Create a mock database
+	db := MockDatabase{}
+
+	// Create a mock KeycloakConfig
+	keycloakConfig := KeycloakConfig{
+		KeycloakHost: "example.com",
+	}
+
+	// Create a request with an unknown email
+	req, err := http.NewRequest("GET", "/.well-known/webfinger?resource=acct:unknown@example.com", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a ResponseRecorder to record the response
+	rr := httptest.NewRecorder()
+
+	// Call the handler function with the KeycloakConfig
+	HandleWebfingerRequest(rr, req, db, keycloakConfig)
+
+	// Check the status code - should be 404 Not Found for unknown user
+	if status := rr.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code for unknown user: got %v want %v", status, http.StatusNotFound)
 	}
 }
