@@ -8,8 +8,9 @@ import (
 
 // Config represents the application configuration
 type Config struct {
-	DB       DBConfig       `json:"db"`
-	Keycloak KeycloakConfig `json:"keycloak"`
+	DB                DBConfig                `json:"db"`
+	Keycloak          KeycloakConfig          `json:"keycloak"`
+	WebfingoWebserver WebfingoWebserverConfig `json:"webfingo-webserver"`
 }
 
 // DBConfig holds database connection details
@@ -24,6 +25,11 @@ type DBConfig struct {
 // KeycloakConfig holds Keycloak connection details
 type KeycloakConfig struct {
 	KeycloakHost string `json:"keycloak-host"`
+}
+
+// WebfingoWebserverConfig holds webserver configuration
+type WebfingoWebserverConfig struct {
+	Port int `json:"port"`
 }
 
 // Load reads and parses the configuration file
@@ -46,17 +52,10 @@ func (c *Config) GetDBConfig() DBConfig {
 	return c.DB
 }
 
-// GetKeycloakConfig returns the Keycloak configuration
 func (c *Config) GetKeycloakConfig() KeycloakConfig {
 	return c.Keycloak
 }
 
-// GetKeycloakHost returns the configured Keycloak host
-func (c *Config) GetKeycloakHost() string {
-	return c.Keycloak.KeycloakHost
-}
-
-// GetDBConnectionString returns a formatted PostgreSQL connection string
 func (c *Config) GetDBConnectionString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		c.DB.User,
@@ -65,4 +64,8 @@ func (c *Config) GetDBConnectionString() string {
 		c.DB.Port,
 		c.DB.Name,
 	)
+}
+
+func (c *Config) GetWebfingoWebserverConfig() WebfingoWebserverConfig {
+	return c.WebfingoWebserver
 }

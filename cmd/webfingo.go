@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,9 +27,14 @@ func main() {
 		webfingo.HandleWebfingerRequest(w, r, dbInstance, conf.Keycloak)
 	})
 
+	// Get webserver configuration
+	webserverConfig := conf.GetWebfingoWebserverConfig()
+	port := webserverConfig.Port
+	serverAddr := fmt.Sprintf(":%d", port)
+
 	// Start HTTP server
-	log.Println("Server starting on port 8080...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	log.Printf("Server starting on port %d...", port)
+	if err := http.ListenAndServe(serverAddr, nil); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }

@@ -8,5 +8,8 @@
     },
     "keycloak": {
         "keycloak-host": "auth.example.com"
+    },
+    "webfingo-webserver": {
+        "port": 8080
     }
 }
