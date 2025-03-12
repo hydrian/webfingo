@@ -1,0 +1,14 @@
+[Unit]
+Description=Webfingo: Webfinger Responses for Keycloak
+After=network.target
+
+[Service]
+Type=simple
+User=webfingo
+Group=webfingo
+WorkingDirectory=/opt/webfingo/
+ExecStart=/usr/bin/webfingo --config /opt/webfingo/config.json
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

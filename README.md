@@ -24,3 +24,15 @@ hostname of your Keycloak endpoint will be needed.
 
 - A Keycloak instance with a Postgres database
 - Go 1.24 or later
+
+## Running with Systemd
+
+An example systemd service file is provided in
+`./deployment-config-examples/webfingo.service`. This example assumes you have a
+user and group named `webfingo`, and that `./bin/webfingo` has been simlinked to
+`/usr/bin/webfingo`.
+
+To install the service, copy the file to `/etc/systemd/system/webfingo.service`
+and run `sudo systemctl enable webfingo` and `sudo systemctl start webfingo`.
+
+Remember to set the appropriate config file location.
