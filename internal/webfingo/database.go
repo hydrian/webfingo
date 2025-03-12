@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	_ "github.com/lib/pq"
 )
@@ -39,6 +40,7 @@ func NewDatabase(connectionString string) (Database, error) {
 	// Verify database connection
 	if err := db.PingContext(context.Background()); err != nil {
 		db.Close()
+		log.Printf("Database connection error: %v", err)
 		return nil, err
 	}
 
