@@ -36,3 +36,11 @@ To install the service, copy the file to `/etc/systemd/system/webfingo.service`
 and run `sudo systemctl enable webfingo` and `sudo systemctl start webfingo`.
 
 Remember to set the appropriate config file location.
+
+## Running Behind Caddy
+
+An example Caddyfile is provided in `./deployment-config-examples/Caddyfile`.
+This example assumes you have a Caddy server running on the same machine as
+Webfingo. Caddy is acting as the TLS endpoint here, and forwarding the request
+on in flat HTTP. Ensure that you configure this appropriately to your
+infrastructure.

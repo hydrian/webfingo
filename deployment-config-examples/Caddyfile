@@ -1,0 +1,31 @@
+https://example.com {
+
+        handle /.well-known/webfinger {
+                reverse_proxy http://localhost:8123 {
+                        # Headers
+                        header_up Host {host}
+                        header_up X-Real-IP {remote}
+                        header_up X-Forwarded-For {remote}
+                        header_up X-Forwarded-Proto {scheme}
+                }
+        }
+
+        handle {
+                respond "404 Not Found" 404
+        }
+
+        handle_errors {
+                respond "{http.error.status_code} {http.error.status_text}" {http.error.status_code}
+        }
+
+        log {
+                output file /var/log/caddy/example.com.log {
+                        mode 660
+                        roll_size 100MiB
+                        roll_uncompressed
+                        roll_local_time
+                        roll_keep 10
+                }
+                format console
+        }
+}
